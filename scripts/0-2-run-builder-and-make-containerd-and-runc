@@ -1,0 +1,19 @@
+source func.sh
+
+#cd $GOPATH/src/github.com/containerd/containerd
+
+cmd1="cd /go/src/github.com/containerd/containerd;make && make install"
+cmd2="cd /go/src/github.com/opencontainers/runc;make BUILDTAGS='seccomp apparmor selinux' && make install"
+echo $cmd1 > /tmp/cmdz1
+echo $cmd2 >> /tmp/cmdz1
+
+
+docker run -it --privileged \
+    -v /var/lib/containerd \
+    -v ${GOPATH}/src/github.com/opencontainers/runc:/go/src/github.com/opencontainers/runc \
+    -v ${GOPATH}/src/github.com/containerd/containerd:/go/src/github.com/containerd/containerd \
+    -v /tmp/cmdz1:/do \
+    -e GOPATH=/go \
+    -w /go/src/github.com/containerd/containerd containerd/build sh /do
+
+

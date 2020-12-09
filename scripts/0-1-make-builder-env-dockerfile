@@ -1,0 +1,26 @@
+source func.sh
+
+prnt "lets GO get the containerd & runc code"
+go get github.com/containerd/containerd
+go get github.com/opencontainers/runc   
+
+#wget -c https://github.com/google/protobuf/releases/download/v3.11.4/protoc-3.11.4-linux-x86_64.zip
+#sudo unzip protoc-3.11.4-linux-x86_64.zip -d /usr/local
+
+
+bd=/tmp/containterd
+prnt "make $bd where builder Dockerfile will live"
+mkdir -p $bd
+
+echo """FROM golang
+RUN apt-get update && \
+    apt-get install -y \
+libbtrfs-dev libseccomp-dev
+""" > $bd/Dockerfile
+
+prnt "building Dockerfile {"
+cat $bd/Dockerfile
+prnt "} found @ $bd"
+
+docker build -t containerd/build $bd
+
